@@ -2,80 +2,67 @@ package com.example.Assignment;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 
-//This Class adds background functionality to the JPanel Class
-public class MainScreen extends JPanel {
-    private static final int DEFAULT_WIDTH = 800;
-    private static final int DEFAULT_HEIGHT = 600;
-    private static Dimension FRAME_DIMENSION = new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+public class MainScreen {
 
-    private static final int BUTTON_WIDTH = 267;
-    private static final int BUTTON_HEIGHT = 50;
-
-    private static final ImageIcon START_ICON = new ImageIcon("images/Start.png");
-    private static final ImageIcon START_HOVER_ICON = new ImageIcon("images/StartHover.png");
-    private static final ImageIcon HISCORE_ICON = new ImageIcon("images/Hiscores.png");
-    private static final ImageIcon HISCORE_HOVER_ICON = new ImageIcon("images/HiscoresHover.png");
-    private static final ImageIcon SETTINGS_ICON = new ImageIcon("images/Settings.png");
-    private static final ImageIcon SETTINGS_HOVER_ICON = new ImageIcon("images/SettingsHover.png");
-    private static final ImageIcon SHIPS_ICON = new ImageIcon("images/Ships.png");
-    private static final ImageIcon SHIPS_HOVER_ICON = new ImageIcon("images/ShipsHover.png");
-    private static final ImageIcon RULES_ICON = new ImageIcon("images/Rules.png");
-    private static final ImageIcon RULES_HOVER_ICON = new ImageIcon("images/RulesHover.png");
-    private static final ImageIcon EXIT_ICON = new ImageIcon("images/Exit.png");
-    private static final ImageIcon EXIT_HOVER_ICON = new ImageIcon("images/ExitHover.png");
-    private JFrame frame;
+    private JFrame frame = new JFrame("Battleship");
 
 
-    public MainScreen() throws IOException {
-        super();
-
-        //Create frame that will hold all UI elements for the mainscreen
-        JFrame frame = new JFrame("Battleship");
+    public MainScreen() {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setSize(FRAME_DIMENSION);
+        frame.setSize(Constants.FRAME_DIMENSION);
         frame.setResizable(false);
+    }
 
-        // Set Mainscreen background
+    public void setMainScreen() throws IOException {
+        /*
+        Create a panel with a background image painted on it.
+        This will be used as the basis for the main screen.
+         */
         JPanel back = new JPanelWithBackground("images/Background.png");
+//        JPanel back = new JPanel();
         back.setLayout(null);
 
-        ImgButton startBut = new ImgButton(START_ICON, START_HOVER_ICON);
-        startBut.setBounds(500, 160,BUTTON_WIDTH,BUTTON_HEIGHT );
+        /*
+        Adding different buttons to the main screen:
+        Start, Hiscores, Settings, Ship placement, Rules and Exit
+         */
+        ImgButton startBut = new ImgButton(Constants.START_ICON, Constants.START_HOVER_ICON);
+        startBut.setBounds(500, 160,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
 
+        ImgButton hiscoreBut = new ImgButton(Constants.HISCORE_ICON, Constants.HISCORE_HOVER_ICON);
+        hiscoreBut.setBounds(500, 240,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
+
+        ImgButton settingsBut = new ImgButton(Constants.SETTINGS_ICON, Constants.SETTINGS_HOVER_ICON);
+        settingsBut.setBounds(500, 290,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
+
+        ImgButton shipsBut = new ImgButton(Constants.SHIPS_ICON, Constants.SHIPS_HOVER_ICON);
+        shipsBut.setBounds(500, 340,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
+
+        ImgButton rulesBut = new ImgButton(Constants.RULES_ICON, Constants.RULES_HOVER_ICON);
+        rulesBut.setBounds(500, 390,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
+
+        ImgButton exitBut = new ImgButton(Constants.EXIT_ICON, Constants.EXIT_HOVER_ICON);
+        exitBut.setBounds(500, 480,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
+
+        /*
+        When the start button is pressed it should clear the current frame and
+        insert a new panel that contains the grid that will be used for playing the game.
+         */
         startBut.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frame.getContentPane().removeAll();
-                frame.repaint();
+                setGameBoard();
+
             }
         });
 
-        ImgButton hiscoreBut = new ImgButton(HISCORE_ICON, HISCORE_HOVER_ICON);
-        hiscoreBut.setBounds(500, 240,BUTTON_WIDTH,BUTTON_HEIGHT );
-
-        ImgButton settingsBut = new ImgButton(SETTINGS_ICON, SETTINGS_HOVER_ICON);
-        settingsBut.setBounds(500, 290,BUTTON_WIDTH,BUTTON_HEIGHT );
-
-        ImgButton shipsBut = new ImgButton(SHIPS_ICON, SHIPS_HOVER_ICON);
-        shipsBut.setBounds(500, 340,BUTTON_WIDTH,BUTTON_HEIGHT );
-
-        ImgButton rulesBut = new ImgButton(RULES_ICON, RULES_HOVER_ICON);
-        rulesBut.setBounds(500, 390,BUTTON_WIDTH,BUTTON_HEIGHT );
-
-        ImgButton exitBut = new ImgButton(EXIT_ICON, EXIT_HOVER_ICON);
-        exitBut.setBounds(500, 480,BUTTON_WIDTH,BUTTON_HEIGHT );
-
-        exitBut.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
-
-
+        /*
+        Add all the buttons to the panel containing the background image
+         */
         back.add(startBut);
         back.add(hiscoreBut);
         back.add(settingsBut);
@@ -83,7 +70,30 @@ public class MainScreen extends JPanel {
         back.add(rulesBut);
         back.add(exitBut);
 
-        frame.add(back);
+        /*
+        When the exit button is pressed it should stop the program.
+         */
+        exitBut.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+
+        /*
+        Add the panel to the frame and display it to the user.
+         */
+        frame.getContentPane().add(back);
         frame.setVisible(true);
+    }
+
+    private void setGameBoard(){
+        frame.getContentPane().removeAll();
+        JPanel panel = new JPanel();
+        JLabel test = new JLabel("Test");
+        panel.add(test);
+        frame.getContentPane().add(panel);
+        frame.revalidate();
+        frame.repaint();
     }
 }

@@ -1,4 +1,4 @@
-package com.example.Battleship;
+package com.example.BattleshipExample;
 
 
 public class Ship {

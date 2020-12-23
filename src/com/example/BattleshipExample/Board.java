@@ -1,6 +1,6 @@
-package com.example.Battleship;
+package com.example.BattleshipExample;
 
-import java.awt.Point;
+import java.awt.*;
 import java.util.Scanner;
 
 
