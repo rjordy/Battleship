@@ -1,5 +1,8 @@
 package com.example.Assignment;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+import org.jetbrains.annotations.NotNull;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -7,17 +10,11 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class MainScreen {
+    private JFrame frame = new JFrame("Battleship");
 
-    private final JFrame frame = new JFrame("Battleship");
+    public MainScreen() {}
 
-
-    public MainScreen() {
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setSize(Constants.FRAME_DIMENSION);
-        frame.setResizable(false);
-    }
-
-    public void setMainScreen() throws IOException {
+    private void drawMainScreen(JFrame frame) throws IOException {
         /*
         Create a panel with a background image painted on it.
         This will be used as the basis for the main screen.
@@ -97,14 +94,26 @@ public class MainScreen {
         frame.setVisible(true);
     }
 
+    public void setMainScreen() throws IOException {
+//        JFrame frame = new JFrame("Battleship:");
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setSize(Constants.FRAME_DIMENSION);
+        frame.setResizable(false);
+        drawMainScreen(frame);
+    }
+    public void setMainScreen(JFrame frame) throws IOException {
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setSize(Constants.FRAME_DIMENSION);
+        frame.setResizable(false);
+        drawMainScreen(frame);
+        frame.validate();
+        frame.repaint();
+    }
+
     private void setGameBoard(){
         frame.getContentPane().removeAll();
-        JPanel panel = new JPanel();
-        JLabel test = new JLabel("Test");
-        panel.add(test);
-        frame.getContentPane().add(panel);
-        frame.revalidate();
-        frame.repaint();
+        GameBoard gb = new GameBoard(frame);
+
     }
 
     private void setSettings(){

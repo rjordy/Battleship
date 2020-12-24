@@ -33,8 +33,6 @@ public class GridLogic extends JPanel {
             public void mouseEntered(MouseEvent e) {
                 if (getBackground() != Color.BLUE) {
                     originalBackground = getBackground();
-                    System.out.println(originalBackground);
-                    System.out.println(DEFAULTBACKGROUND);
                     setBackground(Color.GRAY);
                 }
             }
@@ -48,8 +46,4 @@ public class GridLogic extends JPanel {
         });
     }
 
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(50, 50);
-    }
 }

@@ -1,6 +1,12 @@
 package com.example.Assignment;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class Placement {
+    private int rows;
+    private int cols;
+
     public Placement(){
 //        read file;
 //        first line is grid size (dxd);
@@ -42,7 +48,30 @@ public class Placement {
 
     }
 
-    public void createRandomBoard(){
+    public void createRandomBoard(int rows, int cols){
+        int[][] gridCoords = new int[rows*cols][2];
+        int k = 0;
+        for (int i = 1; i<=rows; i++){
+            for (int j = 1; j<=cols;j++){
+                gridCoords[k][0] = i;
+                gridCoords[k][1] = j;
+                k++;
+            }
+        }
+        Random rand = new Random();
+        boolean valid_coord = false;
+        int x = rand.nextInt(cols);
+        int y = rand.nextInt(rows);
+        for (int[] var : gridCoords){
+            if (var[0] == x && var[1] == y) {
+                valid_coord = true;
+                break;
+            }
+        }
+
+        if(valid_coord){
+
+        }
 //        set array of valid coords;
 //        take 2 random numbers within grid size;
 //        check if numbers are in valid coords else retake;
