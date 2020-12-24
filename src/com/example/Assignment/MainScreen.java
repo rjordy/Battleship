@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class MainScreen {
 
-    private JFrame frame = new JFrame("Battleship");
+    private final JFrame frame = new JFrame("Battleship");
 
 
     public MainScreen() {
@@ -22,9 +22,9 @@ public class MainScreen {
         Create a panel with a background image painted on it.
         This will be used as the basis for the main screen.
          */
-        JPanel back = new JPanelWithBackground("images/Background.png");
+        JPanel background = new JPanelWithBackground("images/Background.png");
 //        JPanel back = new JPanel();
-        back.setLayout(null);
+        background.setLayout(null);
 
         /*
         Adding different buttons to the main screen:
@@ -61,14 +61,14 @@ public class MainScreen {
         });
 
         /*
-        Add all the buttons to the panel containing the background image
+        When the exit button is pressed it should stop the program.
          */
-        back.add(startBut);
-        back.add(hiscoreBut);
-        back.add(settingsBut);
-        back.add(shipsBut);
-        back.add(rulesBut);
-        back.add(exitBut);
+        rulesBut.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setRules();
+            }
+        });
 
         /*
         When the exit button is pressed it should stop the program.
@@ -81,9 +81,19 @@ public class MainScreen {
         });
 
         /*
+        Add all the buttons to the panel containing the background image
+         */
+        background.add(startBut);
+        background.add(hiscoreBut);
+        background.add(settingsBut);
+        background.add(shipsBut);
+        background.add(rulesBut);
+        background.add(exitBut);
+
+        /*
         Add the panel to the frame and display it to the user.
          */
-        frame.getContentPane().add(back);
+        frame.getContentPane().add(background);
         frame.setVisible(true);
     }
 
@@ -95,5 +105,21 @@ public class MainScreen {
         frame.getContentPane().add(panel);
         frame.revalidate();
         frame.repaint();
+    }
+
+    private void setSettings(){
+
+    }
+
+    private void setHiscore(){
+
+    }
+
+    private void setRules(){
+        new Rules();
+    }
+
+    private void setShips() {
+
     }
 }
