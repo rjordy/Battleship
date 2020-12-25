@@ -10,11 +10,6 @@ import java.io.IOException;
 
 public class GameBoard {
     private static final int VALID_BOXES = 14;
-    private JLabel lPlayer1 = new JLabel("Player 1");
-    private JLabel lPlayer2 = new JLabel("Player 2");
-    private JLabel lScore1 = new JLabel("Score: 0");
-    private JLabel lScore2 = new JLabel("Score: 900");
-    private JLabel lTurn = new JLabel("It's your turn Player 1!");
 
     private JButton Brule = new JButton("Rules");
     private JButton BHiscore = new JButton("Hiscores");
@@ -23,13 +18,23 @@ public class GameBoard {
     private Font DEFAULT_FONT = new Font("Dialog", Font.PLAIN, 12);
     private Font BOLD_FONT = new Font("Dialog", Font.BOLD, 12);
 
+    private Player player1 = new Player(1);
+    private Player player2 = new Player(2);
+
+    private JLabel lTurn = new JLabel("It's your turn Player 1!");
+
     public GameBoard(JFrame frame){
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout(0,0));
-//        GridBagConstraints gbc = new GridBagConstraints();
+
+        /*
+        Adding 2 players to the game
+         */
+
 
         /*
         Adding player information to the frame. This will always be displayed at the top of the frame
+        Using a GridBagLayout for the first panel with 3 rows and 3 columns.
          */
         JPanel playerInfo = new JPanel();
         playerInfo.setLayout(new GridBagLayout());
@@ -49,10 +54,12 @@ public class GameBoard {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                if (lPlayer1.getFont() == DEFAULT_FONT){
-                    setTurnP1();
-                } else {
-                    setTurnP2();
+                player1.switchTurn();
+                player2.switchTurn();
+                if (player1.getTurn()){
+                    lTurn.setText("It's your turn " + player1.getName() + "!");
+                } else{
+                    lTurn.setText("It's your turn " + player2.getName() + "!");
                 }
             }
         });
@@ -65,27 +72,27 @@ public class GameBoard {
             }
         });
 
-        lPlayer2.setFont(new Font("Dialog", Font.PLAIN, 12));
-        lScore2.setFont(new Font("Dialog", Font.PLAIN, 12));
+        player1.setBold();
+        player2.setPlain();
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        playerInfo.add(lPlayer1,gbc);
+        playerInfo.add(player1.getlPlayer(),gbc);
         gbc.gridx = 1;
         gbc.gridy = 0;
         playerInfo.add(Brule, gbc);
         gbc.gridx = 2;
         gbc.gridy = 0;
-        playerInfo.add(lPlayer2, gbc);
+        playerInfo.add(player2.getlPlayer(), gbc);
         gbc.gridx = 0;
         gbc.gridy = 1;
-        playerInfo.add(lScore1,gbc);
+        playerInfo.add(player1.getlScore(),gbc);
         gbc.gridx = 1;
         gbc.gridy = 1;
         playerInfo.add(BHiscore, gbc);
         gbc.gridx = 2;
         gbc.gridy = 1;
-        playerInfo.add(lScore2, gbc);
+        playerInfo.add(player2.getlScore(), gbc);
         gbc.gridx = 1;
         gbc.gridy = 2;
         playerInfo.add(BExit, gbc);
@@ -109,22 +116,5 @@ public class GameBoard {
 
         frame.revalidate();
         frame.repaint();
-    }
-
-    public void setTurnP1(){
-        lPlayer1.setFont(BOLD_FONT);
-        lPlayer2.setFont(DEFAULT_FONT);
-        lScore1.setFont(BOLD_FONT);
-        lScore2.setFont(DEFAULT_FONT);
-        lTurn.setText("It's your turn Player 1!");
-    }
-
-    public void setTurnP2(){
-        lPlayer1.setFont(DEFAULT_FONT);
-        lPlayer2.setFont(BOLD_FONT);
-        lScore1.setFont(DEFAULT_FONT);
-        lScore2.setFont(BOLD_FONT);
-        lTurn.setText("It's your turn Player 2!");
-
     }
 }

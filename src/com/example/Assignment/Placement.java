@@ -1,11 +1,17 @@
 package com.example.Assignment;
 
+import com.example.BattleshipExample.Constants;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Placement {
     private int rows;
     private int cols;
+
+    private ArrayList<Point> gridCoords;
+
 
     public Placement(){
 //        read file;
@@ -49,27 +55,24 @@ public class Placement {
     }
 
     public void createRandomBoard(int rows, int cols){
-        int[][] gridCoords = new int[rows*cols][2];
-        int k = 0;
+        Ship[] ships = new Ship[]{
+                new Ship("Carrier"),
+                new Ship("Battleship"),
+                new Ship("Submarine"),
+                new Ship("Destroyer")
+        };
+
+        
+        this.gridCoords = new ArrayList<Point>();
         for (int i = 1; i<=rows; i++){
             for (int j = 1; j<=cols;j++){
-                gridCoords[k][0] = i;
-                gridCoords[k][1] = j;
-                k++;
+                this.gridCoords.add(new Point(i, j));
             }
         }
-        Random rand = new Random();
-        boolean valid_coord = false;
-        int x = rand.nextInt(cols);
-        int y = rand.nextInt(rows);
-        for (int[] var : gridCoords){
-            if (var[0] == x && var[1] == y) {
-                valid_coord = true;
-                break;
-            }
-        }
+        Point rPoint = getRandomPoint();
 
-        if(valid_coord){
+        if(isValidCoord(rPoint)){
+            getRandomOrientation(rPoint, 5);
 
         }
 //        set array of valid coords;
@@ -79,5 +82,87 @@ public class Placement {
 //        pick random orientation where length != 0;
 //        pick random boat in orientation array;
 //        repeat for every boat;
+    }
+
+    public Point getRandomPoint(){
+        Random rand = new Random();
+        int x = rand.nextInt(this.cols);
+        int y = rand.nextInt(this.rows);
+        Point p = new Point(x, y);
+        return p;
+
+    }
+
+    public boolean isValidCoord(Point p){
+        boolean valid_coord = false;
+        for (Point var: this.gridCoords){
+            if (p.equals(var)) {
+                valid_coord = true;
+                break;
+            }
+        }
+        return valid_coord;
+    }
+
+    private boolean isValidUpPlacement(Point startPoint, int size){
+        int x = (int) startPoint.getX();
+        int y = (int) startPoint.getY();
+        for (int i = 1; i <= size; i++) {
+            if (!isValidCoord(new Point(x, y + i))){
+                return false;
+            };
+        }
+        return true;
+    }
+
+    private boolean isValidDownPlacement(Point startPoint, int size){
+        int x = (int) startPoint.getX();
+        int y = (int) startPoint.getY();
+        for (int i = 1; i <= size; i++) {
+            if (!isValidCoord(new Point(x, y - i))){
+                return false;
+            };
+        }
+        return true;
+    }
+
+    private boolean isValidRightPlacement(Point startPoint, int size){
+        int x = (int) startPoint.getX();
+        int y = (int) startPoint.getY();
+        for (int i = 1; i <= size; i++) {
+            if (!isValidCoord(new Point(x + i, y))){
+                return false;
+            };
+        }
+        return true;
+    }
+
+    private boolean isValidLeftPlacement(Point startPoint, int size){
+        int x = (int) startPoint.getX();
+        int y = (int) startPoint.getY();
+        for (int i = 1; i <= size; i++) {
+            if (!isValidCoord(new Point(x - i, y))){
+                return false;
+            };
+        }
+        return true;
+    }
+
+    private String getRandomOrientation(Point p, int size){
+        ArrayList<String> validOrientations = new ArrayList<String>();
+        if (isValidUpPlacement(p, 5)){
+            validOrientations.add("Up");
+        }
+        if (isValidDownPlacement(p, 5)){
+            validOrientations.add("Down");
+        }
+        if (isValidLeftPlacement(p, 5)){
+            validOrientations.add("Left");
+        }
+        if (isValidRightPlacement(p, 5)){
+            validOrientations.add("Right");
+        }
+        Random rand = new Random();
+        return validOrientations.get(rand.nextInt(validOrientations.size()));
     }
 }

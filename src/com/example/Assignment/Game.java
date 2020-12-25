@@ -28,18 +28,8 @@ public class Game {
 //        frame.setLocationRelativeTo(null);
 //        frame.setVisible(true);
 //        new Placement().createRandomBoard(8,8);
-        int[][] newArray2D = new int[64][2];
-        int k = 0;
-        for (int i = 1; i<=8; i++){
-            for (int j = 1; j<=8;j++){
-                newArray2D[k][0] = i;
-                newArray2D[k][1] = j;
-                k++;
-            }
-        }
-        for (int[] var : newArray2D){
-            System.out.println("X: " + var[0] + " Y: " + var[1]);
-        }
+        Ship s = new Ship("Carrier");
+        System.out.println(s.isCoordsEmpty());
 
     }
 

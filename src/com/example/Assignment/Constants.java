@@ -26,4 +26,9 @@ public class Constants {
     public static final ImageIcon RULES_HOVER_ICON = new ImageIcon("images/RulesHover.png");
     public static final ImageIcon EXIT_ICON = new ImageIcon("images/Exit.png");
     public static final ImageIcon EXIT_HOVER_ICON = new ImageIcon("images/ExitHover.png");
+
+    public static final int CARRIER_SIZE = 5;
+    public static final int BATTLESHIP_SIZE = 4;
+    public static final int SUBMARINE_SIZE = 3;
+    public static final int DESTROYER_SIZE = 2;
 }
