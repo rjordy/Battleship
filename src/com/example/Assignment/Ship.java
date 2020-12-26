@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class Ship {
     private String name;
     private int size;
+    private int score;
     private ArrayList<Point> coords = new ArrayList<Point>();
 
 
@@ -28,6 +29,15 @@ public class Ship {
                 }
             }
         }
+        setScore();
+    }
+
+    public ArrayList<Point> getCoords(){
+        return this.coords;
+    }
+
+    public String getName(){
+        return this.name;
     }
 
     public void setCoords(ArrayList<Point> p){
@@ -58,5 +68,38 @@ public class Ship {
         }
     }
 
+    public void setScore(){
+        if (this.name.toLowerCase().equals("carrier")){
+            this.score = 10;
+        } else {
+            if (this.name.toLowerCase().equals("battleship")){
+                this.score = 20;
+            } else {
+                if (this.name.toLowerCase().equals("submarine")){
+                    this.score = 25;
+                } else {
+                    if (this.name.toLowerCase().equals("destroyer")){
+                        this.score = 50;
+                    } else {
+                        this.score = 0;
+                    }
+                }
+            }
+        }
+    }
+
+    public int getScore(){
+        return this.score;
+    }
+
     public int getSize(){ return this.size; }
+
+    public boolean containsPoint(Point p){
+        for (Point coord : this.coords){
+            if (coord.equals(p)){
+                return true;
+            }
+        }
+        return false;
+    }
 }

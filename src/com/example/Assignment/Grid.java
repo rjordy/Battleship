@@ -11,10 +11,23 @@ public class Grid extends JPanel {
     public int GRID_ROWS = 8;
     public int GRID_COLS = 8;
 
+    private JPanel selectedPanel = null;
+
     private static final int GRID_DIMENSION = 400;
 
-    public Grid() {
+    private Ship[] ships;
+
+    public Grid(Ship[] ships) {
+        this.ships = ships;
         setLayout(new GridBagLayout());
+        Placement placement = new Placement();
+        placement.createRandomBoard(GRID_ROWS, GRID_COLS, ships);
+        for (Ship ship : ships){
+            System.out.println("Coordinates for: " + ship.getName());
+            for (Point p : ship.getCoords()){
+                System.out.println("X: " + String.valueOf(p.getX()) + "Y: " + String.valueOf(p.getY()));
+            }
+        }
     }
 
     public void drawGrid(){
@@ -34,6 +47,18 @@ public class Grid extends JPanel {
                 GridLogic cellPane = new GridLogic();
                 Border border = null;
 
+                for (Ship ship : this.ships){
+                    for (Point p : ship.getCoords()){
+                        if (p.equals(new Point(col + 1, row + 1))){
+                            cellPane.setHitIndicator(ship.getName());
+                        }
+                    }
+                }
+
+                if (cellPane.getHitIndicator() == null){
+                    cellPane.setHitIndicator("Miss");
+                }
+
                 if (row == 0){
                     TOP_BORDER++;
                 } else if (row == (GRID_ROWS - 1)){
@@ -46,6 +71,9 @@ public class Grid extends JPanel {
                     RIGHT_BORDER += 2;
                 }
 
+                String name = String.format("cellPane[%d, %d]",
+                        col + 1, row + 1);
+                cellPane.setName(name);
                 border = new MatteBorder(TOP_BORDER, LEFT_BORDER, BOTT_BORDER, RIGHT_BORDER, Color.GRAY);
                 cellPane.setBorder(border);
 

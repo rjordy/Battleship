@@ -29,7 +29,6 @@ public class Game {
 //        frame.setVisible(true);
 //        new Placement().createRandomBoard(8,8);
         Ship s = new Ship("Carrier");
-        System.out.println(s.isCoordsEmpty());
 
     }
 

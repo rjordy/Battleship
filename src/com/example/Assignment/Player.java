@@ -76,5 +76,7 @@ public class Player {
 
     public void addScore(int i){
         this.score += i;
+        this.lScore.setText("Score: " + String.valueOf(score));
+        System.out.println(this.score);
     }
 }

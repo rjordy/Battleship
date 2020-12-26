@@ -9,7 +9,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 public class GameBoard {
-    private static final int VALID_BOXES = 14;
+    private int valid_boxes = 14;
 
     private JButton Brule = new JButton("Rules");
     private JButton BHiscore = new JButton("Hiscores");
@@ -23,14 +23,16 @@ public class GameBoard {
 
     private JLabel lTurn = new JLabel("It's your turn Player 1!");
 
+    Ship[] ships = new Ship[]{
+            new Ship("Carrier"),
+            new Ship("Battleship"),
+            new Ship("Submarine"),
+            new Ship("Destroyer")
+    };
+
     public GameBoard(JFrame frame){
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout(0,0));
-
-        /*
-        Adding 2 players to the game
-         */
-
 
         /*
         Adding player information to the frame. This will always be displayed at the top of the frame
@@ -54,13 +56,7 @@ public class GameBoard {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                player1.switchTurn();
-                player2.switchTurn();
-                if (player1.getTurn()){
-                    lTurn.setText("It's your turn " + player1.getName() + "!");
-                } else{
-                    lTurn.setText("It's your turn " + player2.getName() + "!");
-                }
+                switchTurn();
             }
         });
 
@@ -109,12 +105,78 @@ public class GameBoard {
         /*
         Add Grid as a panel to the frame
          */
-        Grid grid = new Grid();
+        Grid grid = new Grid(ships);
         grid.setGridSize(8,8);
         grid.drawGrid();
+        grid.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                GridLogic panel = (GridLogic) grid.getComponentAt(e.getPoint());
+                if (panel == null) {
+                    return;
+                } else {
+                    if (panel.isActive()) {
+                        String panelName = panel.getName();
+                        String[] panelCoord = panelName.substring(9, panelName.length() - 1).split(", ");
+                        Point panelPoint = new Point(Integer.parseInt(panelCoord[0]), Integer.parseInt(panelCoord[1]));
+                        for (Ship ship : ships) {
+                            if (ship.containsPoint(panelPoint)) {
+                                if (player1.getTurn()) {
+                                    player1.addScore(ship.getScore());
+                                } else {
+                                    player2.addScore(ship.getScore());
+                                }
+                                valid_boxes--;
+                                System.out.println("Boxes left: " + valid_boxes);
+                                if (valid_boxes == 13){
+                                    announceWinner();
+                                }
+                            }
+                        }
+                        panel.showHit();
+                        switchTurn();
+
+                    }
+                }
+            }
+        });
         frame.getContentPane().add(grid, BorderLayout.CENTER);
 
         frame.revalidate();
         frame.repaint();
     }
+
+    public void switchTurn(){
+        player1.switchTurn();
+        player2.switchTurn();
+        if (player1.getTurn()){
+            lTurn.setText("It's your turn " + player1.getName() + "!");
+        } else{
+            lTurn.setText("It's your turn " + player2.getName() + "!");
+        }
+    }
+
+    public void announceWinner(){
+        String winnerName;
+        int winnerScore;
+
+        if (player1.getScore() > player2.getScore()){
+            winnerName = player1.getName();
+            winnerScore = player1.getScore();
+        } else {
+            winnerName = player2.getName();
+            winnerScore = player2.getScore();
+        }
+
+        JFrame winnerFrame = new JFrame(winnerName + " has won!");
+        JPanel winnerPanel = new JPanel();
+//        winnerPanel.setLayout(new BoxLayout());
+        winnerPanel.add(new JLabel("Congratulations " + winnerName + "!"));
+        winnerPanel.add(new JLabel("You won with a score of " + winnerScore + "."));
+        winnerFrame.setSize(new Dimension(250,150));
+        winnerFrame.add(winnerPanel);
+        winnerFrame.setVisible(true);
+    }
+
+
 }
