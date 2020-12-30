@@ -4,12 +4,10 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class Grid extends JPanel {
-    public int GRID_ROWS = 8;
-    public int GRID_COLS = 8;
+    private int rows = 8;
+    private int cols = 8;
 
     private JPanel selectedPanel = null;
 
@@ -20,22 +18,14 @@ public class Grid extends JPanel {
     public Grid(Ship[] ships) {
         this.ships = ships;
         setLayout(new GridBagLayout());
-        Placement placement = new Placement();
-        placement.createRandomBoard(GRID_ROWS, GRID_COLS, ships);
-        for (Ship ship : ships){
-            System.out.println("Coordinates for: " + ship.getName());
-            for (Point p : ship.getCoords()){
-                System.out.println("X: " + String.valueOf(p.getX()) + "Y: " + String.valueOf(p.getY()));
-            }
-        }
     }
 
     public void drawGrid(){
-        int cellDimension = GRID_DIMENSION / GRID_ROWS;
+        int cellDimension = GRID_DIMENSION / rows;
 
         GridBagConstraints gbc = new GridBagConstraints();
-        for (int row = 0; row < GRID_ROWS; row++){
-            for (int col = 0; col < GRID_COLS; col++) {
+        for (int row = 0; row < rows; row++){
+            for (int col = 0; col < cols; col++) {
                 gbc.gridx = col;
                 gbc.gridy = row;
 
@@ -61,13 +51,13 @@ public class Grid extends JPanel {
 
                 if (row == 0){
                     TOP_BORDER++;
-                } else if (row == (GRID_ROWS - 1)){
+                } else if (row == (rows - 1)){
                     BOTT_BORDER += 2;
                 }
 
                 if (col == 0){
                     LEFT_BORDER++;
-                } else if (col == (GRID_COLS - 1)){
+                } else if (col == (cols - 1)){
                     RIGHT_BORDER += 2;
                 }
 
@@ -85,24 +75,24 @@ public class Grid extends JPanel {
     }
 
 
-    public int getGRID_ROWS(){
-        return GRID_ROWS;
+    public int getRows(){
+        return rows;
     }
 
-    public int getGRID_COLS(){
-        return GRID_COLS;
+    public int getCols(){
+        return cols;
     }
 
-    public void setGRID_ROWS(int rows){
-        GRID_ROWS = rows;
+    public void setRows(int rows){
+        this.rows = rows;
     }
 
-    public void setGRID_COLS(int cols){
-        GRID_COLS = cols;
+    public void setCols(int cols){
+        this.cols = cols;
     }
 
     public void setGridSize(int rows, int cols){
-        GRID_ROWS = rows;
-        GRID_COLS = cols;
+        this.rows = rows;
+        this.cols = cols;
     }
 }

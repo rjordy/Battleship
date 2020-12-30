@@ -12,6 +12,17 @@ public class Ship {
 
     public Ship(String name){
         this.name = name;
+        setSize();
+        setScore();
+    }
+
+    public void setName(String name){
+        this.name = name;
+        setSize();
+        setScore();
+    }
+
+    public void setSize(){
         if (this.name.toLowerCase().equals("carrier")){
             this.size = Constants.CARRIER_SIZE;
         } else {
@@ -29,7 +40,6 @@ public class Ship {
                 }
             }
         }
-        setScore();
     }
 
     public ArrayList<Point> getCoords(){
@@ -48,7 +58,7 @@ public class Ship {
         return this.coords.size() == 0;
     }
 
-    public boolean isValid(){
+    public boolean isValidSize(){
         if (this.name.toLowerCase().equals("carrier")){
             return this.coords.size() == Constants.CARRIER_SIZE;
         } else {
@@ -101,5 +111,25 @@ public class Ship {
             }
         }
         return false;
+    }
+
+    public boolean isValidName(){
+        if (this.name.toLowerCase().equals("carrier")){
+            return true;
+        } else {
+            if (this.name.toLowerCase().equals("battleship")){
+                return true;
+            } else {
+                if (this.name.toLowerCase().equals("submarine")){
+                    return true;
+                } else {
+                    if (this.name.toLowerCase().equals("destroyer")){
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
     }
 }

@@ -18,8 +18,8 @@ public class Constants {
     public static final ImageIcon START_HOVER_ICON = new ImageIcon("images/StartHover.png");
     public static final ImageIcon HISCORE_ICON = new ImageIcon("images/Hiscores.png");
     public static final ImageIcon HISCORE_HOVER_ICON = new ImageIcon("images/HiscoresHover.png");
-    public static final ImageIcon GRID_ICON = new ImageIcon("images/Grid.png");
-    public static final ImageIcon GRID_ICON_HOVER = new ImageIcon("images/GridHover.png");
+    public static final ImageIcon SETTINGS_ICON = new ImageIcon("images/Settings.png");
+    public static final ImageIcon SETTINGS_ICON_HOVER = new ImageIcon("images/SettingsHover.png");
     public static final ImageIcon SHIPS_ICON = new ImageIcon("images/Ships.png");
     public static final ImageIcon SHIPS_HOVER_ICON = new ImageIcon("images/ShipsHover.png");
     public static final ImageIcon RULES_ICON = new ImageIcon("images/Rules.png");

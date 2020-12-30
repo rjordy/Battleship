@@ -1,148 +1,190 @@
 package com.example.Assignment;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class MainScreen {
-    private JFrame frame = new JFrame("Battleship");
+    private JFrame frame;
+    private JPanel background;
     private int rows = 8;
     private int cols = 8;
+    private boolean randomization = true;
+
+    private ImgButton startButton;
+    private ImgButton hiscoreButton;
+    private ImgButton rulesButton;
+    private ImgButton settingsButton;
+    private ImgButton shipsButton;
+    private ImgButton exitButton;
+
+    private Ship[] ships;
+
+    public MainScreen(JFrame frame) {
+        this.frame = frame;
+    }
 
 
-    public MainScreen() {}
+    private void initButtons(){
+        this.startButton = new ImgButton(Constants.START_ICON, Constants.START_HOVER_ICON);
+        this.startButton.setBounds(500, 160,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
+        setStartButtonFunc();
 
-    private void drawMainScreen(JFrame frame) throws IOException {
-        /*
-        Create a panel with a background image painted on it.
-        This will be used as the basis for the main screen.
-         */
-        JPanel background = new JPanelWithBackground("images/Background.png");
-//        JPanel back = new JPanel();
-        background.setLayout(null);
+        this.hiscoreButton = new ImgButton(Constants.HISCORE_ICON, Constants.HISCORE_HOVER_ICON);
+        this.hiscoreButton.setBounds(500, 240,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
+        setHiscoreButtonFunc();
 
-        /*
-        Adding different buttons to the main screen:
-        Start, Hiscores, Settings, Ship placement, Rules and Exit
-         */
+        this.rulesButton = new ImgButton(Constants.RULES_ICON, Constants.RULES_HOVER_ICON);
+        this.rulesButton.setBounds(500, 290,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
+        setRulesButtonFunc();
 
-        /*
-        When the start button is pressed it should clear the current frame and
-        insert a new panel that contains the grid that will be used for playing the game.
-         */
-        ImgButton startBut = new ImgButton(Constants.START_ICON, Constants.START_HOVER_ICON);
-        startBut.setBounds(500, 160,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
+        this.settingsButton = new ImgButton(Constants.SETTINGS_ICON, Constants.SETTINGS_ICON_HOVER);
+        this.settingsButton.setBounds(500, 390,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
+        setSettingsButton();
 
-        startBut.addActionListener(new ActionListener() {
+        this.shipsButton = new ImgButton(Constants.SHIPS_ICON, Constants.SHIPS_HOVER_ICON);
+        this.shipsButton.setBounds(500, 340,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
+        setShipsButtonFunc();
+
+        this.exitButton = new ImgButton(Constants.EXIT_ICON, Constants.EXIT_HOVER_ICON);
+        this.exitButton.setBounds(500, 480,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
+        setExitButtonFunc();
+    }
+
+    private void setStartButtonFunc(){
+        this.startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setGameBoard();
-
+                frame.getContentPane().remove(background);
+                GameBoard gb = new GameBoard(frame, rows, cols, ships);
             }
         });
+    }
 
-        ImgButton hiscoreBut = new ImgButton(Constants.HISCORE_ICON, Constants.HISCORE_HOVER_ICON);
-        hiscoreBut.setBounds(500, 240,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
+    private void setHiscoreButtonFunc(){
+    }
 
-        /*
-        When the rules button is pressed it should open a new frame displaying the rules of the game.
-         */
-        ImgButton rulesBut = new ImgButton(Constants.RULES_ICON, Constants.RULES_HOVER_ICON);
-        rulesBut.setBounds(500, 290,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
-
-        rulesBut.addActionListener(new ActionListener() {
+    private void setRulesButtonFunc(){
+        this.rulesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                showRules();
+                new Rules();
             }
         });
+    }
 
-        /**
-        *When the Grid Size button is pressed it should open up a new frame.
-        *This Frame will display 2 dropdown fields allowing the user to choose their grid size
-         * Limited from 5x5 to 15x15
-         */
-        ImgButton gridBut = new ImgButton(Constants.GRID_ICON, Constants.GRID_ICON_HOVER);
-        gridBut.setBounds(500, 390,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
-
-        gridBut.addActionListener(new ActionListener() {
+    private void setSettingsButton() {
+        this.settingsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                GridSize gs = new GridSize();
-                rows = gs.getRows();
-                cols = gs.getCols();
+                Settings settings = new Settings();
+                rows = settings.getRows();
+                cols = settings.getCols();
+                ships = settings.getShips();
             }
         });
+    }
 
+    private void setShipsButtonFunc(){
+        this.shipsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFrame boardPlace = new JFrame();
+                JDialog d = new JDialog(boardPlace, "Ship placement on board", true);
+                d.setLayout(new GridBagLayout());
+                GridBagConstraints gbc = new GridBagConstraints();
+                JLabel boardSource = new JLabel("Current board source: ");
+                JLabel source = new JLabel("Randomized board");
+                source.setFont(new Font("Dialog", Font.PLAIN, 12));
+                JButton changeSource = new JButton("Change source");
+                changeSource.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        randomization = !randomization;
+                        if (randomization) {
+                            source.setText("Randomized board");
+                        } else {
+                            source.setText("Based on user-provided file");
+                        }
+                    }
+                });
+                gbc.insets = new Insets(10,40,10,0);
+                d.add(boardSource, gbc);
+                gbc.insets = new Insets(10,5,10,40);
+                d.add(source,gbc);
+                gbc.gridy=1;
+                gbc.gridwidth=2;
+                d.add(changeSource,gbc);
+                d.pack();
+                d.setVisible(true);
+            }
+        });
+    }
 
-        ImgButton shipsBut = new ImgButton(Constants.SHIPS_ICON, Constants.SHIPS_HOVER_ICON);
-        shipsBut.setBounds(500, 340,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
-
-        ImgButton exitBut = new ImgButton(Constants.EXIT_ICON, Constants.EXIT_HOVER_ICON);
-        exitBut.setBounds(500, 480,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
-
-        /*
-        When the exit button is pressed it should stop the program.
-         */
-        exitBut.addActionListener(new ActionListener() {
+    private void setExitButtonFunc(){
+        this.exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.exit(0);
             }
         });
+    }
 
+    private void drawButtons(){
+        background.add(this.startButton);
+        background.add(this.hiscoreButton);
+        background.add(this.rulesButton);
+        background.add(this.settingsButton);
+        background.add(this.shipsButton);
+        background.add(this.exitButton);
+    }
+    private void drawMainScreen(JFrame frame) throws IOException {
         /*
-        Add all the buttons to the panel containing the background image
+        Create a panel with a background image painted on it.
+        This will be used as the basis for the main screen.
          */
-        background.add(startBut);
-        background.add(hiscoreBut);
-        background.add(gridBut);
-        background.add(shipsBut);
-        background.add(rulesBut);
-        background.add(exitBut);
+        this.background = new Background("images/Background.png");
+        this.background.setLayout(null);
+        initButtons();
+        drawButtons();
 
         /*
         Add the panel to the frame and display it to the user.
          */
-        frame.getContentPane().add(background);
+        frame.getContentPane().add(this.background);
         frame.setVisible(true);
     }
 
     public void setMainScreen() throws IOException {
-//        JFrame frame = new JFrame("Battleship:");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setSize(Constants.FRAME_DIMENSION);
+        frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         drawMainScreen(frame);
     }
-    public void setMainScreen(JFrame frame) throws IOException {
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setSize(Constants.FRAME_DIMENSION);
-        frame.setResizable(false);
-        drawMainScreen(frame);
-        frame.validate();
-        frame.repaint();
-    }
 
-    private void setGameBoard(){
-        frame.getContentPane().removeAll();
-        GameBoard gb = new GameBoard(frame);
-    }
+    private void showHiscore(){
 
-    private void setSettings(){
-
-    }
-
-    private void setHiscore(){
-
-    }
-
-    private void showRules(){
-        new Rules();
     }
 
     private void setShips() {
+    }
 
+    private void setRows(int rows){
+        this.rows = rows;
+    }
+
+    private void setCols(int cols){
+        this.cols = cols;
+    }
+
+    private int getRows(){
+        return this.rows;
+    }
+
+    private int getCols(){
+        return this.cols;
     }
 }

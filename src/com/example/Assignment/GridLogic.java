@@ -18,33 +18,7 @@ public class GridLogic extends JPanel {
     private final Color[] colors = {Color.BLUE, Color.GREEN, Color.YELLOW, Color.BLACK, Color.RED};
     private String hitIndicator;
 
-    public GridLogic() {
-//        addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mouseClicked(MouseEvent e) {
-//                originalBackground = getBackground();
-//                setBackground(hitBackground);
-////                switchplayer;
-////                setfont of active player to bold;
-////            }
-//            }
-//
-//            @Override
-//            public void mouseEntered(MouseEvent e) {
-//                if (!Arrays.stream(colors).anyMatch(getBackground()::equals)) {
-//                    originalBackground = getBackground();
-//                    setBackground(Color.GRAY);
-//                }
-//            }
-//
-//            @Override
-//            public void mouseExited(MouseEvent e) {
-//                if (!Arrays.stream(colors).anyMatch(getBackground()::equals)) {
-//                    setBackground(originalBackground);
-//                }
-//            }
-//        });
-    }
+    public GridLogic() {}
 
     public void showHit(){
         originalBackground = getBackground();

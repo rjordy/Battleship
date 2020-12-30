@@ -1,9 +1,14 @@
 package com.example.Assignment;
 
 import com.example.BattleshipExample.Constants;
+import com.example.BattleshipExample.Position;
+import com.sun.xml.internal.ws.util.StringUtils;
 
+import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.Array;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -11,57 +16,182 @@ public class Placement {
     private int rows;
     private int cols;
 
+    private Ship[] ships;
+    private Ship ship;
+
     private ArrayList<Point> gridCoords;
+    private ArrayList<Point> allCoords;
 
 
     public Placement(){
-
     }
 
-    public void readPlacementFile(){
-//        read file;
-//        first line is grid size (dxd);
-//        boat_name + coords;
-//        for every line first word is boat_name, add subsequent as coords;
-//        check bools;
-//        if all are true then valid else invalid;
+    public void readPlacementFile(String fileName) throws Exception {
+        this.ships = new Ship[]{
+                new Ship("undefined"),
+                new Ship("undefined"),
+                new Ship("undefined"),
+                new Ship("undefined")
+        };
+        File file = new File(fileName);
+
+        BufferedReader br = new BufferedReader(new FileReader(file));
+
+        int nLine = 0;
+        String st;
+        this.allCoords = new ArrayList<Point>();
+        while((st = br.readLine()) != null) {
+            if (isNumeric(st)) {
+                this.rows = Integer.parseInt(st);
+                this.cols = this.rows;
+            } else if (nLine > 4) {
+                showError("Too many boats!");
+            } else {
+                String[] line = st.split(";");
+                String shipName = line[0];
+                ships[nLine].setName(shipName);
+                if (!ships[nLine].isValidName()) {
+                    showError("Invalid ship name on boat declaration: " + nLine + 1);
+                    break;
+                } else {
+                    ArrayList<Point> coords = new ArrayList<Point>();
+                    for (String part : line) {
+                        if (part == shipName) {
+                            continue;
+                        } else {
+                            String[] p = part.split("\\*");
+                            Point temp = new Point(Integer.parseInt(p[0]), Integer.parseInt(p[1]));
+                            coords.add(temp);
+                            this.allCoords.add(temp);
+
+                        }
+                    }
+                    ships[nLine].setCoords(coords);
+                }
+                nLine++;
+            }
+            System.out.println(st);
+        }
+        if (!check_size()){
+            showError("Some boat(s) contains too many/few coordinates!");
+        }
+        if (!unique_loc()){
+            showError("Some boats have overlapping coordinates!");
+        }
+        isOnBoard();
+        if (!checkAlignment()){
+            showError("Some boats are not in a straight line!");
+        }
+    }
+
+    public void showError(String errormsg){
+        JFrame error = new JFrame("ERROR!");
+        error.add(new JLabel("We've encountered an error!"));
+        error.add(new JLabel(errormsg));
+        error.setSize(new Dimension(300,100));
+        error.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        error.setVisible(true);
+    }
+
+    private boolean isNumeric(String s){
+        return s.chars().allMatch(Character::isDigit);
     }
 
     public boolean unique_loc(){
-//        merge all arrays and find duplicates
+        for (int i = 0; i<this.allCoords.size() - 1;i++){
+            Point temp = allCoords.get(i);
+            for (int j = i + 1; j<this.allCoords.size(); j++){
+                Point temp2 = allCoords.get(j);
+                if (temp.equals(temp2)){
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
     public boolean check_size(){
-//        if carrier then array length == 5;
-//        ...
-//        if any of boat_names array == 0 or invalid boat_name then error!;
+        for (Ship s : ships){
+            if (!s.isValidSize()){
+                return false;
+            }
+        }
         return true;
     }
 
-    public boolean isOnBoard(){
-//        no rows/cols that exceed grid size
-        return true;
+    public void isOnBoard(){
+        for (Point p : this.allCoords){
+            int x = (int) p.getX();
+            int y = (int) p.getY();
+            if (x < 0 || y < 0){
+                showError("Some boats have negative coordinates!");
+            } else if (x > this.rows || y > this.cols){
+                showError("Some boats have coordinates that exceed the maximum grid size!");
+            }
+        }
     }
 
     public boolean checkAlignment(){
+        for (Ship s : ships){
+            if (!checkHorizontal(s.getCoords()) && !checkVertical(s.getCoords())){
+                return false;
+            }
+        }
         return true;
-
     }
 
-    public boolean checkHorizontal(){
+    public boolean checkHorizontal(ArrayList<Point> pointList){
+        int x = (int) pointList.get(0).getX();
+        int min_x = x;
+        int max_x = 0;
+        for (Point p : pointList){
+            int p_x = (int) p.getX();
+            if(p_x < min_x){
+                min_x = p_x;
+            } else if (p_x > max_x){
+                max_x = p_x;
+            }
+            if (x != p_x){
+                return false;
+            }
+        }
+        if (max_x - min_x + 1 != pointList.size()){
+            return false;
+        }
         return true;
-
     }
 
-    public boolean checkVertical(){
+    public boolean checkVertical(ArrayList<Point> pointList){
+        int y = (int) pointList.get(0).getY();
+        int min_y = y;
+        int max_y = 0;
+        for (Point p : pointList){
+            int p_y = (int) p.getY();
+            if(p_y < min_y){
+                min_y = p_y;
+            } else if (p_y > max_y){
+                max_y = p_y;
+            }
+            if (y != p_y){
+                return false;
+            }
+        }
+        if (max_y - min_y + 1 != pointList.size()){
+            return false;
+        }
         return true;
-
     }
 
-    public void createRandomBoard(int rows, int cols, Ship[] ships) {
+    public void createRandomBoard(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
+
+        this.ships = new Ship[]{
+                new Ship("Carrier"),
+                new Ship("Battleship"),
+                new Ship("Submarine"),
+                new Ship("Destroyer")
+        };
 
         Point rPoint;
         String orientation;
@@ -82,14 +212,6 @@ public class Placement {
             ArrayList<Point> coords = getPlacementCoords(rPoint, ship.getSize(), orientation);
             ship.setCoords(coords);
             removeCoords(coords);
-
-            //        set array of valid coords;
-            //        take 2 random numbers within grid size;
-            //        check if numbers are in valid coords else retake;
-            //        check amt space to left/right/up/down create array with poss boats/orientation;
-            //        pick random orientation where length != 0;
-            //        pick random boat in orientation array;
-            //        repeat for every boat;
         }
     }
 
@@ -186,4 +308,27 @@ public class Placement {
         return arr;
     }
 
+    public int getRows() {
+        return rows;
+    }
+
+    public int getCols() {
+        return cols;
+    }
+
+    public Ship[] getShips() {
+        return ships;
+    }
+
+    public ArrayList<Point> getAllShipCoords(){
+        ArrayList<Point> temp = new ArrayList<Point>();
+        for (Ship ship : this.ships){
+            System.out.println("Coordinates for: " + ship.getName());
+            for (Point p : ship.getCoords()){
+                temp.add(p);
+                System.out.println("X: " + String.valueOf(p.getX()) + "Y: " + String.valueOf(p.getY()));
+            }
+        }
+        return temp;
+    }
 }
