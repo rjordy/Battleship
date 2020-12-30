@@ -8,10 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class GridLogic extends JPanel {
-
-//    player[1].turn = true;
-//    player[2].turn = false;
-
     private Color originalBackground;
     private Color hitBackground;
     private static final Color DEFAULTBACKGROUND = new Color(238, 238, 238);

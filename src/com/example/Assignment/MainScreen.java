@@ -2,64 +2,79 @@ package com.example.Assignment;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class MainScreen {
-    private JFrame frame;
+    private final JFrame frame;
     private JPanel background;
     private int rows = 8;
     private int cols = 8;
     private boolean randomization = true;
+    private boolean scoringRegular = true;
 
-    private ImgButton startButton;
-    private ImgButton hiscoreButton;
-    private ImgButton rulesButton;
-    private ImgButton settingsButton;
-    private ImgButton shipsButton;
-    private ImgButton exitButton;
+    private ImageButton startButton;
+    private ImageButton hiscoreButton;
+    private ImageButton rulesButton;
+    private ImageButton settingsButton;
+    private ImageButton exitButton;
 
     private Ship[] ships;
 
     public MainScreen(JFrame frame) {
         this.frame = frame;
+        this.rows = 8;
+        this.cols = 8;
+        Placement placement = new Placement();
+        placement.createRandomBoard(rows, cols);
+        this.ships = placement.getShips();
     }
 
 
     private void initButtons(){
-        this.startButton = new ImgButton(Constants.START_ICON, Constants.START_HOVER_ICON);
+        this.startButton = new ImageButton(Constants.START_ICON, Constants.START_HOVER_ICON);
         this.startButton.setBounds(500, 160,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
         setStartButtonFunc();
 
-        this.hiscoreButton = new ImgButton(Constants.HISCORE_ICON, Constants.HISCORE_HOVER_ICON);
+        this.hiscoreButton = new ImageButton(Constants.HISCORE_ICON, Constants.HISCORE_HOVER_ICON);
         this.hiscoreButton.setBounds(500, 240,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
         setHiscoreButtonFunc();
 
-        this.rulesButton = new ImgButton(Constants.RULES_ICON, Constants.RULES_HOVER_ICON);
+        this.rulesButton = new ImageButton(Constants.RULES_ICON, Constants.RULES_HOVER_ICON);
         this.rulesButton.setBounds(500, 290,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
         setRulesButtonFunc();
 
-        this.settingsButton = new ImgButton(Constants.SETTINGS_ICON, Constants.SETTINGS_ICON_HOVER);
-        this.settingsButton.setBounds(500, 390,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
-        setSettingsButton();
+        this.settingsButton = new ImageButton(Constants.SETTINGS_ICON, Constants.SETTINGS_ICON_HOVER);
+        this.settingsButton.setBounds(500, 340,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
+        setSettingsButtonFunc();
 
-        this.shipsButton = new ImgButton(Constants.SHIPS_ICON, Constants.SHIPS_HOVER_ICON);
-        this.shipsButton.setBounds(500, 340,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
-        setShipsButtonFunc();
-
-        this.exitButton = new ImgButton(Constants.EXIT_ICON, Constants.EXIT_HOVER_ICON);
+        this.exitButton = new ImageButton(Constants.EXIT_ICON, Constants.EXIT_HOVER_ICON);
         this.exitButton.setBounds(500, 480,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
         setExitButtonFunc();
     }
 
     private void setStartButtonFunc(){
-        this.startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.getContentPane().remove(background);
-                GameBoard gb = new GameBoard(frame, rows, cols, ships);
-            }
+        this.startButton.addActionListener(e -> {
+            JFrame scoreFrame = new JFrame();
+            JDialog scoreDialog = new JDialog(scoreFrame, "Choose your scoring system:", true);
+            scoreDialog.setLayout(new FlowLayout());
+            JButton normalScore = new JButton("Regular");
+            JButton altScore = new JButton("Alternative");
+            normalScore.addActionListener(e1 -> {
+                    scoringRegular = true;
+                    scoreDialog.dispose();
+            });
+            altScore.addActionListener(e1 -> {
+                scoringRegular = false;
+                scoreDialog.dispose();
+            });
+            scoreDialog.add(normalScore);
+            scoreDialog.add(altScore);
+            scoreDialog.setSize(new Dimension(245,80));
+            scoreDialog.setLocationRelativeTo(null);
+            scoreDialog.setResizable(false);
+            scoreDialog.setVisible(true);
+            frame.getContentPane().remove(background);
+            new GameBoard(frame, rows, cols, ships, scoringRegular);
         });
     }
 
@@ -67,69 +82,21 @@ public class MainScreen {
     }
 
     private void setRulesButtonFunc(){
-        this.rulesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new Rules();
-            }
-        });
+        this.rulesButton.addActionListener(e -> new Rules());
     }
 
-    private void setSettingsButton() {
-        this.settingsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Settings settings = new Settings();
-                rows = settings.getRows();
-                cols = settings.getCols();
-                ships = settings.getShips();
-            }
-        });
-    }
-
-    private void setShipsButtonFunc(){
-        this.shipsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFrame boardPlace = new JFrame();
-                JDialog d = new JDialog(boardPlace, "Ship placement on board", true);
-                d.setLayout(new GridBagLayout());
-                GridBagConstraints gbc = new GridBagConstraints();
-                JLabel boardSource = new JLabel("Current board source: ");
-                JLabel source = new JLabel("Randomized board");
-                source.setFont(new Font("Dialog", Font.PLAIN, 12));
-                JButton changeSource = new JButton("Change source");
-                changeSource.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        randomization = !randomization;
-                        if (randomization) {
-                            source.setText("Randomized board");
-                        } else {
-                            source.setText("Based on user-provided file");
-                        }
-                    }
-                });
-                gbc.insets = new Insets(10,40,10,0);
-                d.add(boardSource, gbc);
-                gbc.insets = new Insets(10,5,10,40);
-                d.add(source,gbc);
-                gbc.gridy=1;
-                gbc.gridwidth=2;
-                d.add(changeSource,gbc);
-                d.pack();
-                d.setVisible(true);
-            }
+    private void setSettingsButtonFunc() {
+        this.settingsButton.addActionListener(e -> {
+            Settings settings = new Settings(randomization);
+            rows = settings.getRows();
+            cols = settings.getCols();
+            ships = settings.getShips();
+            randomization = settings.isRandomization();
         });
     }
 
     private void setExitButtonFunc(){
-        this.exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        this.exitButton.addActionListener(e -> System.exit(0));
     }
 
     private void drawButtons(){
@@ -137,10 +104,9 @@ public class MainScreen {
         background.add(this.hiscoreButton);
         background.add(this.rulesButton);
         background.add(this.settingsButton);
-        background.add(this.shipsButton);
         background.add(this.exitButton);
     }
-    private void drawMainScreen(JFrame frame) throws IOException {
+    public void drawMainScreen() throws IOException {
         /*
         Create a panel with a background image painted on it.
         This will be used as the basis for the main screen.
@@ -157,19 +123,7 @@ public class MainScreen {
         frame.setVisible(true);
     }
 
-    public void setMainScreen() throws IOException {
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setSize(Constants.FRAME_DIMENSION);
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        drawMainScreen(frame);
-    }
-
     private void showHiscore(){
-
-    }
-
-    private void setShips() {
     }
 
     private void setRows(int rows){

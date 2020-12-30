@@ -7,7 +7,7 @@ public class Ship {
     private String name;
     private int size;
     private int score;
-    private ArrayList<Point> coords = new ArrayList<Point>();
+    private ArrayList<Point> coords = new ArrayList<>();
 
 
     public Ship(String name){
@@ -123,11 +123,7 @@ public class Ship {
                 if (this.name.toLowerCase().equals("submarine")){
                     return true;
                 } else {
-                    if (this.name.toLowerCase().equals("destroyer")){
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    return this.name.toLowerCase().equals("destroyer");
                 }
             }
         }

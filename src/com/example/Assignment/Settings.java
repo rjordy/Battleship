@@ -5,13 +5,11 @@ import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 public class Settings {
     private int rows;
     private int cols;
     private boolean randomization = true;
-    private File filename;
 
     private final JDialog d;
     private JComboBox amtCol;
@@ -19,83 +17,104 @@ public class Settings {
     private JPanel settings;
     private JPanel fileSettings;
     private JPanel buttons;
+    private JPanel boardSource;
     private JLabel filePath;
 
     private Placement placement;
     private Ship[] ships;
 
-    private Integer[] SIZES = new Integer[]{5,6,7,8,9,10,11,12,13,14,15};
+    private final Integer[] SIZES = new Integer[]{5,6,7,8,9,10,11,12,13,14,15};
 
-    public Settings(){
+    public Settings(boolean randomization){
+        this.randomization = randomization;
         JFrame gridSize = new JFrame();
         this.d = new JDialog(gridSize, "Settings", true);
         this.d.setLayout(new BorderLayout());
         this.d.setSize(new Dimension(400,250));
 
+        addBoardSource(true);
         addRandomSettings();
         addFileSettings();
         addButtons();
+        this.d.add(boardSource, BorderLayout.PAGE_START);
         this.d.add(settings, BorderLayout.CENTER);
         this.d.add(buttons, BorderLayout.PAGE_END);
         this.d.setVisible(true);
+    }
+
+    private void addBoardSource(Boolean r){
+        this.boardSource = new JPanel();
+        boardSource.setLayout(new BoxLayout(boardSource, BoxLayout.PAGE_AXIS));
+        JLabel BOARD = new JLabel("Current board setting:");
+        BOARD.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel source;
+        if (r) {
+            source = new JLabel("Randomization");
+        } else {
+            source = new JLabel("User provided file");
+        }
+        source.setFont(new Font("Dialog", Font.PLAIN, 12));
+        source.setAlignmentX(Component.CENTER_ALIGNMENT);
+        boardSource.add(BOARD);
+        boardSource.add(source);
     }
 
     private void addButtons(){
         this.buttons = new JPanel();
         this.buttons.setLayout(new FlowLayout());
         JButton changeButton = new JButton("Change source");
-        changeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (randomization){
-                    System.out.println("first check: " + randomization);
-                    d.remove(settings);
-                    addFileSettings();
-                    d.add(fileSettings);
-                    d.revalidate();
-                    randomization = !randomization;
-                    System.out.println("second check: " + randomization);
-                } else {
-                    System.out.println("third check: " + randomization);
-                    d.remove(fileSettings);
-                    addRandomSettings();
-                    d.add(settings);
-                    d.revalidate();
-                    randomization = !randomization;
-                    System.out.println("last check: " + randomization);
-                }
+        changeButton.addActionListener(e -> {
+            if (randomization){
+                System.out.println("first check: " + randomization);
+                d.remove(settings);
+                d.remove(boardSource);
+                addFileSettings();
+                addBoardSource(!randomization);
+                d.add(boardSource, BorderLayout.PAGE_START);
+                d.add(fileSettings, BorderLayout.CENTER);
+                d.revalidate();
+                randomization = !randomization;
+                System.out.println("second check: " + randomization);
+            } else {
+                System.out.println("third check: " + randomization);
+                d.remove(fileSettings);
+                d.remove(boardSource);
+                addRandomSettings();
+                addBoardSource(!randomization);
+                d.add(boardSource, BorderLayout.PAGE_START);
+                d.add(settings, BorderLayout.CENTER);
+                d.revalidate();
+                randomization = !randomization;
+                System.out.println("last check: " + randomization);
             }
         });
         JButton okButton = new JButton("Ok");
-        okButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                placement = new Placement();
-                if (randomization) {
-                    setRows((int)amtRow.getSelectedItem());
-                    setCols((int)amtCol.getSelectedItem());
+        okButton.addActionListener(e -> {
+            placement = new Placement();
+            if (randomization) {
+                setRows((int)amtRow.getSelectedItem());
+                setCols((int)amtCol.getSelectedItem());
+                placement.createRandomBoard(rows, cols);
+                ships = placement.getShips();
+            } else {
+                try {
+                    if (filePath.getText().equals("no file selected")) {
+                        placement.readPlacementFile("Placement.txt");
+                    } else {
+                        placement.readPlacementFile(filePath.getText());
+                    }
+                    setRows(placement.getRows());
+                    setCols(placement.getCols());
+                    ships = placement.getShips();
+                } catch (Exception exception) {
+                    randomization = true;
+                    setRows(8);
+                    setCols(8);
                     placement.createRandomBoard(rows, cols);
                     ships = placement.getShips();
-                } else {
-                    try {
-                        if (filePath.getText().equals("no file selected")) {
-                            placement.readPlacementFile("Placement.txt");
-                            setRows(placement.getRows());
-                            setCols(placement.getCols());
-                            ships = placement.getShips();
-                        } else {
-                            placement.readPlacementFile(filePath.getText());
-                            setRows(placement.getRows());
-                            setCols(placement.getCols());
-                            ships = placement.getShips();
-                        }
-                    } catch (Exception exception) {
-                        exception.printStackTrace();
-                    }
                 }
-                d.dispose();
-                placement.getAllShipCoords();
             }
+            d.dispose();
         });
         this.buttons.add(changeButton);
         this.buttons.add(okButton);
@@ -112,11 +131,11 @@ public class Settings {
         gbc.gridx = 2;
         this.settings.add(new JLabel("Cols :"), gbc);
         gbc.gridy = 1;
-        this.amtCol = new JComboBox<Integer>(this.SIZES);
+        this.amtCol = new JComboBox<>(this.SIZES);
         this.amtCol.setSelectedItem(8);
         this.settings.add(amtCol, gbc);
         gbc.gridx = 0;
-        this.amtRow = new JComboBox<Integer>(this.SIZES);
+        this.amtRow = new JComboBox<>(this.SIZES);
         this.amtRow.setSelectedItem(8);
         this.settings.add(amtRow, gbc);
         gbc.gridx = 1;
@@ -135,13 +154,10 @@ public class Settings {
         JButton open = new JButton("Open");
         this.filePath = new JLabel("no file selected");
         filePath.setBorder(new MatteBorder(1,1,1,1, Color.GRAY));
-        open.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int r = fc.showOpenDialog(null);
-                if (r == JFileChooser.APPROVE_OPTION){
-                    filePath.setText(fc.getSelectedFile().getAbsolutePath());
-                }
+        open.addActionListener(e -> {
+            int r = fc.showOpenDialog(null);
+            if (r == JFileChooser.APPROVE_OPTION){
+                filePath.setText(fc.getSelectedFile().getAbsolutePath());
             }
         });
         fileSettings.add(open, gbc);

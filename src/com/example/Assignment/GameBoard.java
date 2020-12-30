@@ -1,17 +1,15 @@
 package com.example.Assignment;
 
-import sun.text.bidi.BidiRun;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 
 public class GameBoard {
-    private int valid_boxes = 14;
+    private int valid_boxes = Constants.VALID_BOXES;
     private int rows;
     private int cols;
+    private final boolean scoringRegular;
     private Ship[] ships;
 
     private final Font DEFAULT_FONT = new Font("Dialog", Font.PLAIN, 12);
@@ -22,10 +20,12 @@ public class GameBoard {
 
     private final JLabel lTurn = new JLabel("It's your turn Player 1!");
 
-    public GameBoard(JFrame frame, int rows, int cols, Ship[] ships){
+    public GameBoard(JFrame frame, int rows, int cols, Ship[] ships, Boolean scoring){
         this.rows = rows;
         this.cols = cols;
         this.ships = ships;
+        this.scoringRegular = scoring;
+
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout(0,0));
 
@@ -125,10 +125,15 @@ public class GameBoard {
                         Point panelPoint = new Point(Integer.parseInt(panelCoord[0]), Integer.parseInt(panelCoord[1]));
                         for (Ship ship : ships) {
                             if (ship.containsPoint(panelPoint)) {
+                                int amtPoints = ship.getScore();
                                 if (player1.getTurn()) {
-                                    player1.addScore(ship.getScore());
+                                    player1.addScore(amtPoints);
                                 } else {
-                                    player2.addScore(ship.getScore());
+                                    if (scoringRegular) {
+                                        player2.addScore(amtPoints);
+                                    } else {
+                                        player2.addScore((int) (amtPoints*1.2));
+                                    }
                                 }
                                 valid_boxes--;
                                 System.out.println("Boxes left: " + valid_boxes);
@@ -174,11 +179,12 @@ public class GameBoard {
 
         JFrame winnerFrame = new JFrame(winnerName + " has won!");
         JPanel winnerPanel = new JPanel();
-//        winnerPanel.setLayout(new BoxLayout());
         winnerPanel.add(new JLabel("Congratulations " + winnerName + "!"));
         winnerPanel.add(new JLabel("You won with a score of " + winnerScore + "."));
-        winnerFrame.setSize(new Dimension(250,150));
-        winnerFrame.add(winnerPanel);
+        winnerFrame.setSize(new Dimension(280,100));
+        winnerFrame.add(winnerPanel, BorderLayout.CENTER);
+        winnerFrame.setLocationRelativeTo(null);
+        winnerFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         winnerFrame.setVisible(true);
     }
 

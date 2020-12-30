@@ -1,9 +1,5 @@
 package com.example.Assignment;
 
-import com.example.BattleshipExample.Constants;
-import com.example.BattleshipExample.Position;
-import com.sun.xml.internal.ws.util.StringUtils;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
@@ -17,7 +13,6 @@ public class Placement {
     private int cols;
 
     private Ship[] ships;
-    private Ship ship;
 
     private ArrayList<Point> gridCoords;
     private ArrayList<Point> allCoords;
@@ -39,7 +34,7 @@ public class Placement {
 
         int nLine = 0;
         String st;
-        this.allCoords = new ArrayList<Point>();
+        this.allCoords = new ArrayList<>();
         while((st = br.readLine()) != null) {
             if (isNumeric(st)) {
                 this.rows = Integer.parseInt(st);
@@ -54,16 +49,13 @@ public class Placement {
                     showError("Invalid ship name on boat declaration: " + nLine + 1);
                     break;
                 } else {
-                    ArrayList<Point> coords = new ArrayList<Point>();
+                    ArrayList<Point> coords = new ArrayList<>();
                     for (String part : line) {
-                        if (part == shipName) {
-                            continue;
-                        } else {
+                        if (!part.equals(shipName)) {
                             String[] p = part.split("\\*");
                             Point temp = new Point(Integer.parseInt(p[0]), Integer.parseInt(p[1]));
                             coords.add(temp);
                             this.allCoords.add(temp);
-
                         }
                     }
                     ships[nLine].setCoords(coords);
@@ -84,13 +76,13 @@ public class Placement {
         }
     }
 
-    public void showError(String errormsg){
+    public void showError(String errormsg) throws Exception {
         JFrame error = new JFrame("ERROR!");
         error.add(new JLabel("We've encountered an error!"));
         error.add(new JLabel(errormsg));
         error.setSize(new Dimension(300,100));
-        error.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         error.setVisible(true);
+        throw new Exception();
     }
 
     private boolean isNumeric(String s){
@@ -119,7 +111,7 @@ public class Placement {
         return true;
     }
 
-    public void isOnBoard(){
+    public void isOnBoard() throws Exception {
         for (Point p : this.allCoords){
             int x = (int) p.getX();
             int y = (int) p.getY();
@@ -134,6 +126,7 @@ public class Placement {
     public boolean checkAlignment(){
         for (Ship s : ships){
             if (!checkHorizontal(s.getCoords()) && !checkVertical(s.getCoords())){
+                System.out.println(s.getName());
                 return false;
             }
         }
@@ -142,42 +135,33 @@ public class Placement {
 
     public boolean checkHorizontal(ArrayList<Point> pointList){
         int x = (int) pointList.get(0).getX();
-        int min_x = x;
-        int max_x = 0;
+        int prev_y = (int) pointList.get(0).getY();
         for (Point p : pointList){
-            int p_x = (int) p.getX();
-            if(p_x < min_x){
-                min_x = p_x;
-            } else if (p_x > max_x){
-                max_x = p_x;
-            }
-            if (x != p_x){
+            int p_y = (int) p.getY();
+            int diff = p_y - prev_y;
+            prev_y = p_y;
+            if (x != p.getX()){
+                return false;
+            } else if (diff > 1 || diff < -1){
                 return false;
             }
-        }
-        if (max_x - min_x + 1 != pointList.size()){
-            return false;
         }
         return true;
     }
 
     public boolean checkVertical(ArrayList<Point> pointList){
         int y = (int) pointList.get(0).getY();
-        int min_y = y;
-        int max_y = 0;
+        int prev_x = (int) pointList.get(0).getX();
         for (Point p : pointList){
-            int p_y = (int) p.getY();
-            if(p_y < min_y){
-                min_y = p_y;
-            } else if (p_y > max_y){
-                max_y = p_y;
-            }
-            if (y != p_y){
+            int p_x = (int) p.getX();
+            int diff = p_x - prev_x;
+            System.out.println(diff);
+            prev_x = p_x;
+            if (y != p.getY()){
+                return false;
+            } else if (diff > 1 || diff < -1){
                 return false;
             }
-        }
-        if (max_y - min_y + 1 != pointList.size()){
-            return false;
         }
         return true;
     }
@@ -196,7 +180,7 @@ public class Placement {
         Point rPoint;
         String orientation;
 
-        this.gridCoords = new ArrayList<Point>();
+        this.gridCoords = new ArrayList<>();
         for (int i = 1; i <= rows; i++) {
             for (int j = 1; j <= cols; j++) {
                 this.gridCoords.add(new Point(j, i));
@@ -225,8 +209,7 @@ public class Placement {
         Random rand = new Random();
         int x = rand.nextInt(this.cols);
         int y = rand.nextInt(this.rows);
-        Point p = new Point(x, y);
-        return p;
+        return new Point(x, y);
 
     }
 
@@ -268,7 +251,7 @@ public class Placement {
     }
 
     private String getRandomOrientation(Point p, int size){
-        ArrayList<String> validOrientations = new ArrayList<String>();
+        ArrayList<String> validOrientations = new ArrayList<>();
         String[] orientations = new String[]{"Up", "Down", "Left", "Right"};
         for (String orientation : orientations) {
             if (isValidPlacement(p, size, orientation)) {
@@ -283,7 +266,7 @@ public class Placement {
     }
 
     private ArrayList<Point> getPlacementCoords(Point startPoint, int size, String orientation){
-        ArrayList<Point> arr = new ArrayList<Point>();
+        ArrayList<Point> arr = new ArrayList<>();
         int x = (int) startPoint.getX();
         int y = (int) startPoint.getY();
         int vert = 0;
@@ -318,17 +301,5 @@ public class Placement {
 
     public Ship[] getShips() {
         return ships;
-    }
-
-    public ArrayList<Point> getAllShipCoords(){
-        ArrayList<Point> temp = new ArrayList<Point>();
-        for (Ship ship : this.ships){
-            System.out.println("Coordinates for: " + ship.getName());
-            for (Point p : ship.getCoords()){
-                temp.add(p);
-                System.out.println("X: " + String.valueOf(p.getX()) + "Y: " + String.valueOf(p.getY()));
-            }
-        }
-        return temp;
     }
 }
