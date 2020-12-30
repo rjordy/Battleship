@@ -20,11 +20,14 @@ public class GameBoard {
 
     private final JLabel lTurn = new JLabel("It's your turn Player 1!");
 
+    private HighScore highScore;
+
     public GameBoard(JFrame frame, int rows, int cols, Ship[] ships, Boolean scoring){
         this.rows = rows;
         this.cols = cols;
         this.ships = ships;
         this.scoringRegular = scoring;
+        this.highScore = new HighScore();
 
         frame.getContentPane().removeAll();
         frame.setLayout(new BorderLayout(0,0));
@@ -53,7 +56,7 @@ public class GameBoard {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                switchTurn();
+                highScore.drawHighscores();
             }
         });
 
@@ -117,7 +120,6 @@ public class GameBoard {
             public void mouseClicked(MouseEvent e) {
                 GridLogic panel = (GridLogic) grid.getComponentAt(e.getPoint());
                 if (panel == null) {
-                    return;
                 } else {
                     if (panel.isActive()) {
                         String panelName = panel.getName();
@@ -125,6 +127,7 @@ public class GameBoard {
                         Point panelPoint = new Point(Integer.parseInt(panelCoord[0]), Integer.parseInt(panelCoord[1]));
                         for (Ship ship : ships) {
                             if (ship.containsPoint(panelPoint)) {
+                                ship.addHit();
                                 int amtPoints = ship.getScore();
                                 if (player1.getTurn()) {
                                     player1.addScore(amtPoints);
@@ -136,7 +139,6 @@ public class GameBoard {
                                     }
                                 }
                                 valid_boxes--;
-                                System.out.println("Boxes left: " + valid_boxes);
                                 if (valid_boxes == 0){
                                     announceWinner();
                                 }
@@ -177,6 +179,8 @@ public class GameBoard {
             winnerScore = player2.getScore();
         }
 
+        highScore.addHighscore(player1.getScore());
+        highScore.addHighscore(player2.getScore());
         JFrame winnerFrame = new JFrame(winnerName + " has won!");
         JPanel winnerPanel = new JPanel();
         winnerPanel.add(new JLabel("Congratulations " + winnerName + "!"));

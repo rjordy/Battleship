@@ -39,6 +39,7 @@ public class Settings {
         this.d.add(boardSource, BorderLayout.PAGE_START);
         this.d.add(settings, BorderLayout.CENTER);
         this.d.add(buttons, BorderLayout.PAGE_END);
+        this.d.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         this.d.setVisible(true);
     }
 
@@ -65,7 +66,6 @@ public class Settings {
         JButton changeButton = new JButton("Change source");
         changeButton.addActionListener(e -> {
             if (randomization){
-                System.out.println("first check: " + randomization);
                 d.remove(settings);
                 d.remove(boardSource);
                 addFileSettings();
@@ -74,9 +74,7 @@ public class Settings {
                 d.add(fileSettings, BorderLayout.CENTER);
                 d.revalidate();
                 randomization = !randomization;
-                System.out.println("second check: " + randomization);
             } else {
-                System.out.println("third check: " + randomization);
                 d.remove(fileSettings);
                 d.remove(boardSource);
                 addRandomSettings();
@@ -85,7 +83,6 @@ public class Settings {
                 d.add(settings, BorderLayout.CENTER);
                 d.revalidate();
                 randomization = !randomization;
-                System.out.println("last check: " + randomization);
             }
         });
         JButton okButton = new JButton("Ok");

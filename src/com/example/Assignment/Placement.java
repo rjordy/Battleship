@@ -62,8 +62,8 @@ public class Placement {
                 }
                 nLine++;
             }
-            System.out.println(st);
         }
+        br.close();
         if (!check_size()){
             showError("Some boat(s) contains too many/few coordinates!");
         }
@@ -126,7 +126,6 @@ public class Placement {
     public boolean checkAlignment(){
         for (Ship s : ships){
             if (!checkHorizontal(s.getCoords()) && !checkVertical(s.getCoords())){
-                System.out.println(s.getName());
                 return false;
             }
         }
@@ -155,7 +154,6 @@ public class Placement {
         for (Point p : pointList){
             int p_x = (int) p.getX();
             int diff = p_x - prev_x;
-            System.out.println(diff);
             prev_x = p_x;
             if (y != p.getY()){
                 return false;

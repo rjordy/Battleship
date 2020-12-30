@@ -79,6 +79,10 @@ public class MainScreen {
     }
 
     private void setHiscoreButtonFunc(){
+        this.hiscoreButton.addActionListener(e -> {
+            HighScore highScore = new HighScore();
+            highScore.drawHighscores();
+        });
     }
 
     private void setRulesButtonFunc(){
@@ -121,9 +125,6 @@ public class MainScreen {
          */
         frame.getContentPane().add(this.background);
         frame.setVisible(true);
-    }
-
-    private void showHiscore(){
     }
 
     private void setRows(int rows){

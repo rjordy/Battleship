@@ -7,6 +7,7 @@ public class Ship {
     private String name;
     private int size;
     private int score;
+    private int hits;
     private ArrayList<Point> coords = new ArrayList<>();
 
 
@@ -14,6 +15,7 @@ public class Ship {
         this.name = name;
         setSize();
         setScore();
+        this.hits = 0;
     }
 
     public void setName(String name){
@@ -99,6 +101,9 @@ public class Ship {
     }
 
     public int getScore(){
+        if (this.hits == this.size){
+            return this.score * 2;
+        }
         return this.score;
     }
 
@@ -127,5 +132,9 @@ public class Ship {
                 }
             }
         }
+    }
+
+    public void addHit(){
+        this.hits++;
     }
 }
