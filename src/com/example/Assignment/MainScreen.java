@@ -7,10 +7,10 @@ import java.io.IOException;
 public class MainScreen {
     private final JFrame frame;
     private JPanel background;
-    private int rows = 8;
-    private int cols = 8;
-    private boolean randomization = true;
-    private boolean scoringRegular = true;
+    private int rows;
+    private int cols;
+    private boolean randomization;
+    private boolean scoringRegular;
 
     private ImageButton startButton;
     private ImageButton hiscoreButton;
@@ -20,22 +20,33 @@ public class MainScreen {
 
     private Ship[] ships;
 
+    /*
+     * By default the mainscreen should prepare for the board placement
+     * it does this by using a grid size of 8x8
+     * and using randomization for the board placement
+     */
     public MainScreen(JFrame frame) {
         this.frame = frame;
         this.rows = 8;
         this.cols = 8;
+        this.randomization = true;
+        this.scoringRegular = true;
         Placement placement = new Placement();
         placement.createRandomBoard(rows, cols);
         this.ships = placement.getShips();
     }
 
 
+    /*
+     * This initializes the buttons that will be used on the main screen
+     * with every button there is a call to *ButtonFunc()
+     */
     private void initButtons(){
         this.startButton = new ImageButton(Constants.START_ICON, Constants.START_HOVER_ICON);
         this.startButton.setBounds(500, 160,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
         setStartButtonFunc();
 
-        this.hiscoreButton = new ImageButton(Constants.HISCORE_ICON, Constants.HISCORE_HOVER_ICON);
+        this.hiscoreButton = new ImageButton(Constants.HIGHSCORE_ICON, Constants.HIGHSCORE_HOVER_ICON);
         this.hiscoreButton.setBounds(500, 240,Constants.BUTTON_WIDTH,Constants.BUTTON_HEIGHT );
         setHiscoreButtonFunc();
 
@@ -52,6 +63,11 @@ public class MainScreen {
         setExitButtonFunc();
     }
 
+    /*
+     * This adds functionality to the start button
+     * whenever the start button is clicked it should ask the user which scoring system they want to use
+     * afterwards the background is removed from the frame and replaced by a gameboard
+     */
     private void setStartButtonFunc(){
         this.startButton.addActionListener(e -> {
             JFrame scoreFrame = new JFrame();
@@ -78,6 +94,10 @@ public class MainScreen {
         });
     }
 
+    /*
+     * When the highscore button is clicked it should open up a new frame
+     * This displays the top 10 of previously attained scores
+     */
     private void setHiscoreButtonFunc(){
         this.hiscoreButton.addActionListener(e -> {
             HighScore highScore = new HighScore();
@@ -85,10 +105,21 @@ public class MainScreen {
         });
     }
 
+    /*
+     * whenever the rules button is clicked it should open a new frame
+     * This displays the general rules that belong to the game
+     */
     private void setRulesButtonFunc(){
         this.rulesButton.addActionListener(e -> new Rules());
     }
 
+    /*
+     * Whenever the settings button is called it should up a new frame displaying the settings
+     * by default it will show the settings for randomization, which allow the user to change the grid dimensions
+     * by clicking change source the settings convert to a user provided file
+     * this allows the user to select a .txt file of their choosing
+     * if no file is chosen then it will default to Placement.txt contained in the root folder
+     */
     private void setSettingsButtonFunc() {
         this.settingsButton.addActionListener(e -> {
             Settings settings = new Settings(randomization);
@@ -99,10 +130,16 @@ public class MainScreen {
         });
     }
 
+    /*
+     * Whenever the user clicks on the exit button it should fully stop the program
+     */
     private void setExitButtonFunc(){
         this.exitButton.addActionListener(e -> System.exit(0));
     }
 
+    /*
+     * This method will add the buttons to the screen
+     */
     private void drawButtons(){
         background.add(this.startButton);
         background.add(this.hiscoreButton);
@@ -110,6 +147,10 @@ public class MainScreen {
         background.add(this.settingsButton);
         background.add(this.exitButton);
     }
+
+    /*
+     * This contains the full logic for the creation of the main screen
+     */
     public void drawMainScreen() throws IOException {
         /*
         Create a panel with a background image painted on it.

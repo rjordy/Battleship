@@ -9,8 +9,7 @@ public class Grid extends JPanel {
     private int rows = 8;
     private int cols = 8;
 
-    private JPanel selectedPanel = null;
-
+    //This will be the dimension of the total JPanel containing all cells
     private static final int GRID_DIMENSION = 400;
 
     private Ship[] ships;
@@ -20,6 +19,12 @@ public class Grid extends JPanel {
         setLayout(new GridBagLayout());
     }
 
+    /*
+     * for every row and column:
+     * create a cell and if the row and column match that of a ship
+     * use the shipname to define the cell background after being hit
+     * if it doesn't match then this means the cell would be a miss
+     */
     public void drawGrid(){
         int cellDimension = GRID_DIMENSION / rows;
 
@@ -29,13 +34,15 @@ public class Grid extends JPanel {
                 gbc.gridx = col;
                 gbc.gridy = row;
 
+                /*
+                 * These are the standard borders
+                 */
                 int TOP_BORDER = 1;
                 int LEFT_BORDER = 1;
                 int BOTT_BORDER = 0;
                 int RIGHT_BORDER = 0;
 
                 GridLogic cellPane = new GridLogic();
-                Border border = null;
 
                 for (Ship ship : this.ships){
                     for (Point p : ship.getCoords()){
@@ -49,6 +56,10 @@ public class Grid extends JPanel {
                     cellPane.setHitIndicator("Miss");
                 }
 
+                /*
+                 * if the cell is at the top (row = 0) then add extra weight to the top border
+                 * this repeats for every border (top, down, left, right) in order
+                 */
                 if (row == 0){
                     TOP_BORDER++;
                 } else if (row == (rows - 1)){
@@ -61,10 +72,11 @@ public class Grid extends JPanel {
                     RIGHT_BORDER += 2;
                 }
 
+                //give every panel a distinct name which corresponds to the coordinates
                 String name = String.format("cellPane[%d, %d]",
                         col + 1, row + 1);
                 cellPane.setName(name);
-                border = new MatteBorder(TOP_BORDER, LEFT_BORDER, BOTT_BORDER, RIGHT_BORDER, Color.GRAY);
+                Border border = new MatteBorder(TOP_BORDER, LEFT_BORDER, BOTT_BORDER, RIGHT_BORDER, Color.GRAY);
                 cellPane.setBorder(border);
 
                 //set cell size so the total grid will occupy a 400x400 dimension.

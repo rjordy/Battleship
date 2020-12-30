@@ -9,10 +9,16 @@ public class Rules {
     private JFrame ruleFrame = new JFrame("Rules");
 
 
+    /*
+     * The rules will be displayed on a new frame
+     * the body of the rules is entirely written in html to make formatting easier to manage
+     * the frame will always appear in the left upper corner of the screen
+     */
     public Rules() {
         ruleFrame.setSize(new Dimension(550, 910));
         ruleFrame.setLayout(new BorderLayout());
         ruleFrame.getContentPane().add(ruleBody(), BorderLayout.CENTER);
+        ruleFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         ruleFrame.setVisible(true);
     }
 

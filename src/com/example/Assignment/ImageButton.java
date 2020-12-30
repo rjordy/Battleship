@@ -6,6 +6,11 @@ import java.awt.event.MouseEvent;
 
 public class ImageButton extends JButton {
 
+    /*
+     * This creates a JButton which uses an image as a button
+     * when a user hovers their mouse over the button it should change
+     * this is the second argument img_on_hover
+     */
     public ImageButton(ImageIcon img, ImageIcon img_on_hover) {
         this.setOpaque(false);
         this.setContentAreaFilled(false);

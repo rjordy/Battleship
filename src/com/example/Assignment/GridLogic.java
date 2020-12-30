@@ -16,11 +16,19 @@ public class GridLogic extends JPanel {
 
     public GridLogic() {}
 
+    /*
+     * when the cell is selected show whichever background
+     * was assigned when the cell was added to the grid
+     */
     public void showHit(){
         originalBackground = getBackground();
         setBackground(hitBackground);
     }
 
+    /*
+     * This sets the background when the cell gets selected
+     * the color depends on the shipname
+     */
     public void setHitIndicator(String s){
         this.hitIndicator = s;
         if (this.hitIndicator.toLowerCase().equals("carrier")){
@@ -50,6 +58,12 @@ public class GridLogic extends JPanel {
         return this.hitIndicator;
     }
 
+    /*
+     * This function checks the current background of the cell
+     * if it is not blue, red, green, yellow or black
+     * then this means the cell hasn't been selected yet and it should return true
+     * if it does have a color then the cell is no longer active
+     */
     public boolean isActive(){
         if (Arrays.stream(colors).anyMatch(getBackground()::equals)){
             return false;

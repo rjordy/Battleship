@@ -3,12 +3,10 @@ package com.example.Assignment;
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Settings {
-    private int rows;
-    private int cols;
+    private int rows = 8;
+    private int cols = 8;
     private boolean randomization = true;
 
     private final JDialog d;
@@ -25,6 +23,12 @@ public class Settings {
 
     private final Integer[] SIZES = new Integer[]{5,6,7,8,9,10,11,12,13,14,15};
 
+    /*
+     * When the settings are called it should open a new frame which by default shows the randomization options
+     * this allows the user to edit the amount of rows and columns the grid will have
+     * if a user doesn't want to play with randomization they can press the change source button
+     * this will remove the randomization settings from the frame and add the file settings on to the frame instead
+     */
     public Settings(boolean randomization){
         this.randomization = randomization;
         JFrame gridSize = new JFrame();
@@ -43,23 +47,30 @@ public class Settings {
         this.d.setVisible(true);
     }
 
-    private void addBoardSource(Boolean r){
+    /*
+     * This method will add JLabels to the frame denoting the currently used source
+     */
+    private void addBoardSource(Boolean randomized){
         this.boardSource = new JPanel();
         boardSource.setLayout(new BoxLayout(boardSource, BoxLayout.PAGE_AXIS));
-        JLabel BOARD = new JLabel("Current board setting:");
-        BOARD.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel board = new JLabel("Current board setting:");
+        board.setAlignmentX(Component.CENTER_ALIGNMENT);
         JLabel source;
-        if (r) {
+        if (randomized) {
             source = new JLabel("Randomization");
         } else {
             source = new JLabel("User provided file");
         }
         source.setFont(new Font("Dialog", Font.PLAIN, 12));
         source.setAlignmentX(Component.CENTER_ALIGNMENT);
-        boardSource.add(BOARD);
+        boardSource.add(board);
         boardSource.add(source);
     }
 
+    /*
+     * This will add 2 buttons (change source and ok) to the frame
+     * along with the functionality
+     */
     private void addButtons(){
         this.buttons = new JPanel();
         this.buttons.setLayout(new FlowLayout());
@@ -89,9 +100,13 @@ public class Settings {
         okButton.addActionListener(e -> {
             placement = new Placement();
             if (randomization) {
-                setRows((int)amtRow.getSelectedItem());
-                setCols((int)amtCol.getSelectedItem());
-                placement.createRandomBoard(rows, cols);
+                if (amtRow.getSelectedItem() != null) {
+                    setRows((int) amtRow.getSelectedItem());
+                }
+                if (amtCol.getSelectedItem() != null) {
+                    setCols((int) amtCol.getSelectedItem());
+                }
+                placement.createRandomBoard(this.rows, this.cols);
                 ships = placement.getShips();
             } else {
                 try {
@@ -117,6 +132,9 @@ public class Settings {
         this.buttons.add(okButton);
     }
 
+    /*
+     * This method will add the settings pertaining to the randomization of the board
+     */
     private void addRandomSettings(){
         this.settings = new JPanel();
         this.settings.setLayout(new GridBagLayout());
@@ -140,6 +158,10 @@ public class Settings {
         this.settings.add(new JLabel("x"), gbc);
     }
 
+    /*
+     * This method will add the ability to select a file for placement
+     * if no file is selected it should use the default file Placement.txt
+     */
     private void addFileSettings(){
         this.fileSettings = new JPanel();
         fileSettings.setLayout(new GridBagLayout());
@@ -173,10 +195,16 @@ public class Settings {
     }
 
     public int getRows(){
+        if (this.rows == 0){
+            return 8;
+        }
         return this.rows;
     }
 
     public int getCols(){
+        if (this.cols == 0){
+            return 8;
+        }
         return this.cols;
     }
 

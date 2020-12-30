@@ -13,7 +13,7 @@ public class Game {
     }
 
     public void initFrame(){
-        /**
+        /*
          * Initialize a frame that will hold the base game
          */
         this.gameScreen = new JFrame("Battleship");
@@ -24,6 +24,9 @@ public class Game {
     }
 
     public void start() throws IOException {
+        /*
+         * Start the game by calling for the mainscreen to be drawn
+         */
         MainScreen ms = new MainScreen(this.gameScreen);
         ms.drawMainScreen();
     }
